@@ -22,12 +22,12 @@
 
 #### **Start Cluster**
 
-`minikube start`
+>`minikube start`
 
 
 #### **Dashboard Interraction**
 
-`minikube dashboard`
+>`minikube dashboard`
 
 ## **Kubernetes**
 
@@ -35,58 +35,48 @@
 
 #### **Install Cluster**
 
-`kubeadm`
+>`kubeadm`
 
 #### **Launch Pods**
 
-`kubelet`
+>`kubelet`
 
 #### **Communicate w/ Cluster**
 
-`kubectl`
-
-#### **Init Master**
-
-`kubeadm init --apiserver-advertise-address=$MASTER_IP -- node-name $HOSTNAME --pod-network-cidr=10.244.0.0/16`
+>`kubectl`
 
 ## **Step**
 
-### **Create Deploy**
+### **Deploy**
 
-`kubectl create deployment $NAME --image=$DOCKER_IMG`
-
-#### **Check**
-`kubectl get deployments`
-
-`kubectl get pods`
-
-`kubectl get events`
-
-### **Create Service**
-
-`kubectl expose deployment $NAME --type=LoadBalancer --port=$PORT`
+>`kubectl apply -f $PATH_TO_YAML`
 
 #### **Check**
+>`kubectl get deployments`
 
-`kubectl get services`
+>`kubectl get pods`
+
+>`kubectl get events`
+
+>`kubectl get services`
 
 ### **Access**
 
 <p><em>On Minikube, the LoadBalancer type make the service accesible with the command:</em></p>
 
-`minikube service $NAME`
+>`minikube service $NAME`
 
 ### **Clean**
 
 #### **Service**
 
-`kubectl delete service $NAME`
+>`kubectl delete service $NAME`
 
-`kubectl delete deployment $NAME`
+>`kubectl delete deployment $NAME`
 
 
 #### **Stop Minikube**
-`minikube stop`
+>`minikube stop`
 
 ### **Delete Minikube's VM**
-`minikube delete`
+>`minikube delete`
