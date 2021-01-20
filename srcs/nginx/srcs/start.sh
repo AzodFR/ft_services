@@ -1,4 +1,4 @@
-rc-service nginx status
-echo "Started"
+(telegraf conf &) && /usr/sbin/sshd
+nginx -g 'daemon off;'
 
-tail -f /dev/null
+tail -f /dev/null/

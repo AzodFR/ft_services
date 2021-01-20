@@ -3,8 +3,9 @@ kind: Deployment
 metadata:
   name: nginx
   labels:
-    app: nginx-deployment
+    app: nginx
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: nginx
@@ -15,5 +16,10 @@ spec:
     spec:
       containers:
         - name: nginx
-          imagePullPolicy: Never
           image: nginx-image
+          imagePullPolicy: Never
+          livenessProbe:
+            tcpSocket:
+              port: 22
+            initialDelaySeconds: 4
+            periodSeconds: 4

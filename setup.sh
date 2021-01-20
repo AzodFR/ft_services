@@ -1,12 +1,5 @@
 #!/bin/bash
 
-function get_ip()
-{
-	GLOBAL_IP=$(kubectl get node -o=custom-columns='DATA:status.addresses[0].address' | sed -n 2p | cut -d '.' -f 1,2,3)
-	START_IP=$GLOBAL_IP'.1'
-	END_IP=$GLOBAL_IP'.254'
-}
-
 function build_spec()
 {
 	docker build srcs/$1/. -t $1-image
@@ -15,22 +8,34 @@ function build_spec()
 
 function metallb_install()
 {
-  sed -e "s/IP_S/$START_IP/g;s/IP_E/$END_IP/g" srcs/metallb/example_config.yaml > srcs/metallb/metallb.yaml
+  sed -e "s/IP_S/$GLOBAL_IP/g;s/IP_E/$GLOBAL_IP/g" srcs/metallb/example_config.yaml > srcs/metallb/metallb.yaml
   kubectl apply -f srcs/metallb/namespace.yaml
   kubectl apply -f srcs/metallb/manifest.yaml
   kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
   kubectl apply -f srcs/metallb/metallb.yaml
 }
 
+function ftps_ip
+{
+	sed -e "s/FTPS_IP/$GLOBAL_IP/g" srcs/vsftpd/srcs/template.conf > srcs/vsftpd/srcs/vsftpd.conf
+}
 
 function start()
 {
-	get_ip
+	kubectl apply -f srcs/volume.yaml
 	metallb_install
+	ftps_ip
+	build_spec influxdb
+	build_spec grafana
 	build_spec vsftpd
+	build_spec nginx
+	build_spec vsftpd
+	echo "Available at $GLOBAL_IP"
 	minikube dashboard
 }
 
+
+minikube delete
 MK_OFF=$(minikube ip | grep "start" | wc -l | cut -c8-)
 
 if [[ "$MK_OFF" == 1 ]]; then
@@ -38,4 +43,5 @@ if [[ "$MK_OFF" == 1 ]]; then
 fi
 
 eval "$(minikube docker-env)"
+GLOBAL_IP=$(minikube ip)
 start

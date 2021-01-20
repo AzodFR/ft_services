@@ -1,4 +1,6 @@
-FROM alpine:latest
+FROM alpine:3.12
+
+EXPOSE 21
 
 RUN apk update --no-cache
 RUN apk upgrade --no-cache
@@ -22,3 +24,4 @@ RUN openssl req -new -x509 -days 365 -nodes -out /etc/ssl/private/vsftpd.cert.pe
 
 COPY ./srcs/start.sh /start.sh
 RUN chmod +x /start.sh
+ENTRYPOINT ["/bin/sh", "/start.sh"]
