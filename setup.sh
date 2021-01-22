@@ -38,7 +38,7 @@ fi
 
 eval "$(minikube docker-env)"
 GLOBAL_IP=$(kubectl get node -o=custom-columns='DATA:status.addresses[0].address' | sed -n 2p)
-IP_1_3=$($GLOBAL_IP | cut -d '.' -f 1,2,3)
+IP_1_3=$(echo "$GLOBAL_IP" | cut -d '.' -f 1,2,3)
 START=$(echo "$GLOBAL_IP" | cut -d '.' -f 4)
 MINIKUBE_START="$IP_1_3".$((START + 1))
 MINIKUBE_END="$IP_1_3".254
