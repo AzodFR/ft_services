@@ -8,28 +8,22 @@ function build_spec()
 
 function metallb_install()
 {
-  sed -e "s/IP_S/$GLOBAL_IP/g;s/IP_E/$GLOBAL_IP/g" srcs/metallb/example_config.yaml > srcs/metallb/metallb.yaml
+  sed -e "s/IP_S/$MINIKUBE_START/g;s/IP_E/$MINIKUBE_END/g" srcs/metallb/example_config.yaml > srcs/metallb/metallb.yaml
   kubectl apply -f srcs/metallb/namespace.yaml
   kubectl apply -f srcs/metallb/manifest.yaml
   kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
   kubectl apply -f srcs/metallb/metallb.yaml
 }
 
-function ftps_ip
-{
-	sed -e "s/FTPS_IP/$GLOBAL_IP/g" srcs/vsftpd/srcs/template.conf > srcs/vsftpd/srcs/vsftpd.conf
-}
-
 function start()
 {
 	kubectl apply -f srcs/volume.yaml
 	metallb_install
-	ftps_ip
+	build_spec vsftpd
+	build_spec phpmyadmin
 	build_spec influxdb
 	build_spec grafana
-	build_spec vsftpd
 	build_spec nginx
-	build_spec vsftpd
 	echo "Available at $GLOBAL_IP"
 	minikube dashboard
 }
@@ -39,9 +33,14 @@ minikube delete
 MK_OFF=$(minikube ip | grep "start" | wc -l | cut -c8-)
 
 if [[ "$MK_OFF" == 1 ]]; then
-	minikube start
+	minikube start --driver=docker
 fi
 
 eval "$(minikube docker-env)"
-GLOBAL_IP=$(minikube ip)
+GLOBAL_IP=$(kubectl get node -o=custom-columns='DATA:status.addresses[0].address' | sed -n 2p)
+IP_1_3=$($GLOBAL_IP | cut -d '.' -f 1,2,3)
+START=$(echo "$GLOBAL_IP" | cut -d '.' -f 4)
+MINIKUBE_START="$IP_1_3".$((START + 1))
+MINIKUBE_END="$IP_1_3".254
+sed -i -e "s/pasv_address=.*/pasv_address=$MINIKUBE_START/g" ./srcs/vsftpd/srcs/vsftpd.conf
 start

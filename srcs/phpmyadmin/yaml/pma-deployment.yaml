@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpmyadmin
+  labels:
+    app: phpmyadmin
+  annotations:
+    metallb.universe.tf/allow-shared-ip: shared
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phpmyadmin
+  template:
+    metadata:
+      labels:
+        app: phpmyadmin
+    spec:
+      containers:
+        - name: phpmyadmin
+          image: img_phpmyadmin
+          ports:
+            - containerPort: 5000
+          imagePullPolicy: Never
+          livenessProbe:
+            tcpSocket:
+              port: 5000
+            initialDelaySeconds: 4
+            periodSeconds: 4

@@ -1,5 +1,7 @@
 FROM alpine:3.12
 
+EXPOSE 8086
+
 RUN apk -U upgrade \
 ; apk add --no-cache \
 openrc \
