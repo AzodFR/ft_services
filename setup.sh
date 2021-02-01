@@ -39,9 +39,9 @@ function metallinstall()
 
 function sedding()
 {
-	sed -e "s/GLOB_IP/$GLOBIP/g" srcs/templates/wp.sh >> srcs/wordpress/srcs/wp.sh
-	sed -e "s/IP_S/$GLOBIP/g;s/IP_E/$GLOBIP/g" srcs/templates/metallb.yaml >> srcs/metallb/metallb.yaml
-	sed -e "s/GLOB_IP/$GLOBIP/g" srcs/templates/Dockerfile_ftps >> srcs/ftps/Dockerfile
+	sed -e "s/GLOB_IP/$GLOBIP/g" srcs/templates/wp.sh > srcs/wordpress/srcs/wp.sh
+	sed -e "s/IP_S/$GLOBIP/g;s/IP_E/$GLOBIP/g" srcs/templates/metallb.yaml > srcs/metallb/metallb.yaml
+	sed -e "s/GLOB_IP/$GLOBIP/g" srcs/templates/Dockerfile_ftps > srcs/ftps/Dockerfile
 }
 
 function check_brew()
