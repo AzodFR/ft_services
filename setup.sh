@@ -80,7 +80,6 @@ function start()
 	sedding
 	metallinstall
 	build_services
-	tput cnorm
 	minikube dashboard
 
 }
