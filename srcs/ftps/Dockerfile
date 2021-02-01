@@ -1,0 +1,27 @@
+FROM alpine:3.12
+
+RUN apk -U upgrade \
+&& apk add --no-cache \
+openrc \
+pure-ftpd --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted --no-cache \
+openssl \
+; apk add telegraf --repository http://dl-3.alpinelinux.org/alpine/edge/community/ --allow-untrusted --no-cache \
+; adduser -D -g 'admin' admin \
+; echo "admin:admin" | chpasswd \
+; echo "it works !" > /home/admin/ftps_work.txt \
+; mkdir -p /etc/ssl/private \
+; chmod 777 /etc/ssl/private \
+; openssl req -x509 -nodes -days 365 -newkey rsa:2048 \-keyout /etc/ssl/private/pure-ftpd.pem \-out /etc/ssl/private/pure-ftpd.pem \-subj "/C=FR/ST=Lyon/L=Lyon/O=thjacque/OU=42/CN=42.fr" \
+; chmod 600 /etc/ssl/private/pure-ftpd.pem \
+; mkdir -p /run/openrc/ && touch /run/openrc/softlevel \
+; touch /run/openrc/softlevel
+
+COPY srcs/telegraf.conf /etc/telegraf/telegraf.conf
+
+EXPOSE 21
+
+#CMD pure-ftpd
+#CMD sleep infinity
+#-Y 2 force le ssl
+
+CMD (telegraf conf &) && /usr/sbin/pure-ftpd -Y 2 -p 30000:30009 -P 192.168.99.123

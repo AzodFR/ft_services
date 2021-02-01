@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+  annotations:
+    metallb.universe.tf/address-pool: default
+    metallb.universe.tf/allow-shared-ip: shared
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+      - image: wordpress-image
+        name: wordpress
+        imagePullPolicy: Never
+        livenessProbe:
+          tcpSocket:
+            port: 5050
+          initialDelaySeconds: 60
+          periodSeconds: 4
+        ports:
+        - containerPort: 5050
+          name: wordpress
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/www/html
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-volume

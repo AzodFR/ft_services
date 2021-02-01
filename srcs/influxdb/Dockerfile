@@ -1,7 +1,5 @@
 FROM alpine:3.12
 
-EXPOSE 8086
-
 RUN apk -U upgrade \
 ; apk add --no-cache \
 openrc \
@@ -12,4 +10,5 @@ COPY srcs/start.sh /start.sh
 COPY srcs/telegraf.conf /etc/telegraf/telegraf.conf
 
 RUN chmod 777 /start.sh
+
 CMD sh start.sh

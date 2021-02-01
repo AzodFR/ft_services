@@ -18,12 +18,12 @@ spec:
     spec:
       containers:
         - name: phpmyadmin
-          image: img_phpmyadmin
+          image: phpmyadmin-image
           ports:
             - containerPort: 5000
           imagePullPolicy: Never
           livenessProbe:
             tcpSocket:
               port: 5000
-            initialDelaySeconds: 4
+            initialDelaySeconds: 60
             periodSeconds: 4
